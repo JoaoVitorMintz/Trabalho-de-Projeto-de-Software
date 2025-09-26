@@ -1,7 +1,7 @@
 # Diagrama de classe:
 
-```
-'''@startuml
+```plantuml
+@startuml
 ' =============================
 ' Classes de Sensores
 ' =============================
@@ -79,5 +79,5 @@ class Checklist {
   - DOUBLE Bateria
   - LIST<BOOL> SensoresFunc
 }
-@enduml'''
+@enduml
 ```
