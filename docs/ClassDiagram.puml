@@ -1,7 +1,4 @@
-# Diagrama de classe:
-
-```plantuml
-@startuml
+@startuml ClassDiagram
 ' =============================
 ' Classes de Sensores
 ' =============================
@@ -80,4 +77,4 @@ class Checklist {
   - LIST<BOOL> SensoresFunc
 }
 @enduml
-```
+
