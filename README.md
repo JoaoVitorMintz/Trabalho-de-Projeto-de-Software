@@ -2,7 +2,7 @@
 
 ## Alunos: 
  - João Vitor Garcia Aguiar Mintz; RA: 10440421
- - Giovanni ; RA: 
+ - Giovanni ; RA: 10435745
 
 
 ## Contexto: 
@@ -39,6 +39,8 @@ Em suma: o projeto será desenvolvido de forma incremental, avaliando sua evolu�
         - ETAPA #8: Projeto Final (código Java, documentação e vídeo demo) - 19/11.
 
 ## Tema: 
+
+Sistema de Controle de Drones para áreas rurais
 
 ### Contexto: 
 
