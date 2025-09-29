@@ -1,0 +1,16 @@
+@startuml SequenceDiagram
+actor Operador as user
+actor Drone as drone 
+actor "Banco de Dados" as DB
+actor Sistema as sys
+
+user -> sys : Acessa as missões de voo
+sys -> DB : Acessa banco de dados para buscar uma missão e ver qual operador e drone está relacionado à missão
+DB -> sys : Retorna o ID do Operador e do Drone atrelado à missão
+sys -> drone : Envia solicitação para drone relacionado à missão
+sys -> user : Envia feedback ao operador para iniciar a missão
+user -> drone : Opera o drone na missão
+drone -> sys : Fornece ao sistema os dados coletados pelos sensores
+sys -> DB : Repassa os dados coletados pelo drone para o banco de dados
+sys -> user : Repassa valores adquiridos na missão para realização do relatório
+@enduml
