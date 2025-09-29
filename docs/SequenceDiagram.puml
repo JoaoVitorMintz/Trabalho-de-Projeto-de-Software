@@ -1,16 +1,32 @@
 @startuml SequenceDiagram
 actor Operador as user
-actor Drone as drone 
-actor "Banco de Dados" as DB
-actor Sistema as sys
+participant Drone as drone 
+participant "Banco de Dados" as DB
+participant Sistema as sys
+
+user -> sys : Solicita login
+sys -> sys : Verifica credenciais e role
+alt Acesso negado
+    sys -> user : Nega a acesso do usuário
+else Acesso permitido
+    sys -> user : Permite acesso ao sistema
+end
 
 user -> sys : Acessa as missões de voo
-sys -> DB : Acessa banco de dados para buscar uma missão e ver qual operador e drone está relacionado à missão
-DB -> sys : Retorna o ID do Operador e do Drone atrelado à missão
-sys -> drone : Envia solicitação para drone relacionado à missão
-sys -> user : Envia feedback ao operador para iniciar a missão
-user -> drone : Opera o drone na missão
-drone -> sys : Fornece ao sistema os dados coletados pelos sensores
-sys -> DB : Repassa os dados coletados pelo drone para o banco de dados
-sys -> user : Repassa valores adquiridos na missão para realização do relatório
+sys -> DB : Consulta missões e drones atrelados à missão
+DB -> sys : Retorna dados da missão
+
+sys -> sys : Verifica checklist do drone
+alt Checklist falhou
+    sys -> user : Erro: falta de bateria ou sensores falhando
+else
+    sys -> drone : Solicita drone para iniciar missão
+    sys -> user : Envia feedback ao operador para iniciar a missão
+    user -> drone : Opera o drone
+    drone -> sys : Envia dados coletados
+    sys -> DB : Armazena dados da missão
+    sys -> sys : Gera relatório
+    sys -> user : Retorna relatório da missão
+end
+
 @enduml

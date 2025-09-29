@@ -2,79 +2,88 @@
 ' =============================
 ' Classes de Sensores
 ' =============================
-class Sensores {
-  M ValidarSensores()
+class Sensor {
+  + boolean validarSensores()
 }
 
 class SensorTemperatura {
-  - DOUBLE Temperatura
-  M ValidarTemperatura()
+  - double Temperatura
+  + boolean ValidarTemperatura()
 }
 
 class SensorUmidade {
-  - DOUBLE Umidade
-  M ValidarUmidade()
+  - double Umidade
+  + boolean ValidarUmidade()
 }
 
 class SensorInfravermelho {
-  - BOOL Ativo
-  M ValidarPragas()
+  - boolean Ativo
+  + boolean ValidarPragas()
 }
 
-Sensores <|-- SensorTemperatura
-Sensores <|-- SensorUmidade
-Sensores <|-- SensorInfravermelho
+Sensor <|-- SensorTemperatura
+Sensor <|-- SensorUmidade
+Sensor <|-- SensorInfravermelho
 
 ' =============================
 ' Classes de Drones e Missões
 ' =============================
-class Drones {
-  - INT ID
-  - Sensores sensores
-  - STRING Status
+class Drone {
+  - int ID
+  - List<Sensores> sensores
+  - string Status
+  + void atualizarStatus(string novoStatus)
 }
 
-class "Missões de voo" as MissoesVoo {
-  - INT Data
-  - STRING IDMissao
-  - DOUBLE Area
-  M AtribuirDrone()
+class MissoesVoo {
+  - date Data
+  - string idMissao
+  - CadastroArea area
+  - Drones drone
+  + void AtribuirDrone(Drones drone)
+  + boolean verificarSopreposicao()
 }
 
-class "Cadastro Áreas" as CadastroAreas {
-  - DOUBLE Tamanho
-  - DOUBLE Localizacao
-  - STRING TipoCultivo
+class CadastroArea {
+  - double Tamanho
+  - string Localizacao
+  - string TipoCultivo
 }
 
-class "Registro de Dados" as RegistroDados {
-  - Imagens
-  - LIST<DOUBLE> ValoresSensores
+class RegistroDados {
+  - List<File> Imagens
+  - List<double> ValoresSensores
+  + void salvarDados()
 }
 
 class Relatorio {
-  - DOUBLE Medições
-  - INT Qtd_Voo
+  - List<double> medicoes
+  - int Qtd_Voo
+  + void gerarResumo()
 }
 
-MissoesVoo <-- Drones
-Drones --> Sensores
-Drones --> CadastroAreas
+Drone --> "1..*" Sensor
+MissoesVoo --> Drone
+MissoesVoo --> CadastroArea
 MissoesVoo --> RegistroDados
-RegistroDados --> Relatorio : "Extensão"
+RegistroDados --> Relatorio
 
 ' =============================
 ' Outras Classes
 ' =============================
 
 class Autorizacao {
-  M Role()
-  ' Verificação de role ADM ou Operador
+  - string usuario
+  - string senhaHash
+  - string role
+  + string verificarRole()
+  + boolean validarSenha(string senhaDigitada)
 }
 
 class Checklist {
-  - DOUBLE Bateria
-  - LIST<BOOL> SensoresFunc
+  - double Bateria
+  - List<Boolean> SensoresFunc
+  + boolean validarChecklist()
 }
 @enduml
 
