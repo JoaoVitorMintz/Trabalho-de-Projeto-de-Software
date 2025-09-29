@@ -64,17 +64,32 @@ MissoesVoo --> RegistroDados
 RegistroDados --> Relatorio : "Extensão"
 
 ' =============================
-' Outras Classes
+' Checklist
 ' =============================
-
-class Autorizacao {
-  M Role()
-  ' Verificação de role ADM ou Operador
-}
-
 class Checklist {
   - DOUBLE Bateria
   - LIST<BOOL> SensoresFunc
 }
-@enduml
 
+' =============================
+' Usuário + Herança
+' =============================
+class Usuario {
+  - INT ID
+  - STRING Nome
+  - STRING Setor
+}
+
+class Operador {
+  M OperarDrone()
+}
+
+class Administrador {
+  M GerenciarSistema()
+  M CadastrarUsuario()
+  M AutorizarAcesso(ID, Senha)
+}
+
+Usuario <|-- Operador
+Usuario <|-- Administrador
+@enduml
