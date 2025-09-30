@@ -69,7 +69,7 @@ MissoesVoo --> RegistroDados
 RegistroDados --> Relatorio
 
 ' =============================
-' Outras Classes
+' Checklist
 ' =============================
 
 class Autorizacao {
@@ -85,5 +85,26 @@ class Checklist {
   - List<Boolean> SensoresFunc
   + boolean validarChecklist()
 }
-@enduml
 
+' =============================
+' Usuário + Herança
+' =============================
+class Usuario {
+  - INT ID
+  - STRING Nome
+  - STRING Setor
+}
+
+class Operador {
+  M OperarDrone()
+}
+
+class Administrador {
+  M GerenciarSistema()
+  M CadastrarUsuario()
+  M AutorizarAcesso(ID, Senha)
+}
+
+Usuario <|-- Operador
+Usuario <|-- Administrador
+@enduml
