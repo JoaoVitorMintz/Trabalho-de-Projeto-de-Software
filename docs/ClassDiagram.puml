@@ -1,110 +1,108 @@
-@startuml ClassDiagram
-' =============================
-' Classes de Sensores
-' =============================
-class Sensor {
-  + boolean validarSensores()
-}
+@startuml ClassDiagram 
+' ============================= 
+' Classes de Sensores 
+' ============================= 
+class Sensor { 
+  + boolean validarSensores() 
+} 
 
-class SensorTemperatura {
-  - double Temperatura
-  + boolean ValidarTemperatura()
-}
+class SensorTemperatura { 
+  - double Temperatura 
+  + boolean ValidarTemperatura() 
+} 
 
-class SensorUmidade {
-  - double Umidade
-  + boolean ValidarUmidade()
-}
+class SensorUmidade { 
+  - double Umidade 
+  + boolean ValidarUmidade() 
+} 
 
-class SensorInfravermelho {
-  - boolean Ativo
-  + boolean ValidarPragas()
-}
+class SensorInfravermelho { 
+  - boolean Ativo 
+  + boolean ValidarPragas() 
+} 
 
-Sensor <|-- SensorTemperatura
-Sensor <|-- SensorUmidade
-Sensor <|-- SensorInfravermelho
+Sensor <|-- SensorTemperatura 
+Sensor <|-- SensorUmidade 
+Sensor <|-- SensorInfravermelho 
 
-' =============================
-' Classes de Drones e Missões
-' =============================
-class Drone {
-  - int ID
-  - List<Sensores> sensores
-  - string Status
-  + void atualizarStatus(string novoStatus)
-}
+' ============================= 
+' Classes de Drones e Missões 
+' ============================= 
+class Drone { 
+  - int ID 
+  - List<Sensor> sensores 
+  - string Status 
+  + void atualizarStatus(string novoStatus) 
+} 
 
-class MissoesVoo {
-  - date Data
-  - string idMissao
-  - CadastroArea area
-  - Drones drone
-  + void AtribuirDrone(Drones drone)
-  + boolean verificarSopreposicao()
-}
+class MissoesVoo { 
+  - date Data 
+  - string idMissao 
+  - CadastroArea area 
+  - Drones drone 
+  + void AtribuirDrone(Drone drone) 
+  + boolean verificarSopreposicao() 
+} 
 
-class CadastroArea {
-  - double Tamanho
-  - string Localizacao
-  - string TipoCultivo
-}
+class CadastroArea { 
+  - double Tamanho 
+  - string Localizacao 
+  - string TipoCultivo 
+} 
 
-class RegistroDados {
-  - List<File> Imagens
-  - List<double> ValoresSensores
-  + void salvarDados()
-}
+class RegistroDados { 
+  - List<File> Imagens 
+  - List<double> ValoresSensores 
+  + void salvarDados() 
+} 
 
-class Relatorio {
-  - List<double> medicoes
-  - int Qtd_Voo
-  + void gerarResumo()
-}
+class Relatorio { 
+  - List<double> medicoes 
+  - int Qtd_Voo 
+  + void gerarResumo() 
+} 
 
-Drone --> "1..*" Sensor
-MissoesVoo --> Drone
-MissoesVoo --> CadastroArea
-MissoesVoo --> RegistroDados
-RegistroDados --> Relatorio
+Drone --> "1..*" Sensor 
+MissoesVoo --> Drone 
+MissoesVoo --> CadastroArea 
+MissoesVoo --> RegistroDados 
+RegistroDados --> Relatorio 
 
-' =============================
-' Checklist
-' =============================
-
-class Autorizacao {
-  - string usuario
+' ============================= 
+' Outras Classes 
+' ============================= 
+class Autorizacao { 
   - string senhaHash
   - string role
   + string verificarRole()
-  + boolean validarSenha(string senhaDigitada)
-}
+  + boolean validarSenha(string senhaDigitada) 
+} 
 
-class Checklist {
-  - double Bateria
-  - List<Boolean> SensoresFunc
-  + boolean validarChecklist()
-}
+class Checklist { 
+  - double Bateria 
+  - List<Boolean> SensoresFunc 
+  + boolean validarChecklist() 
+} 
 
-' =============================
-' Usuário + Herança
-' =============================
+Checklist --> MissoesVoo
+
 class Usuario {
-  - INT ID
-  - STRING Nome
-  - STRING Setor
-}
-
-class Operador {
-  M OperarDrone()
+  - string nome
+  - int userID
+  + boolean fazerLogin()
 }
 
 class Administrador {
-  M GerenciarSistema()
-  M CadastrarUsuario()
-  M AutorizarAcesso(ID, Senha)
+  + void cadastrarUsuario()
+  + void gerenciarSistema()
 }
 
-Usuario <|-- Operador
+class Operador {
+  + void operarDrone()
+}
+
 Usuario <|-- Administrador
+Usuario <|-- Operador
+Usuario "1" --> "0..1" Autorizacao
+
 @enduml
