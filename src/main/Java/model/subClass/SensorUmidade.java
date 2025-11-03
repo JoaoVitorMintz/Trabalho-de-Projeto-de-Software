@@ -1,4 +1,4 @@
-package java.main.model.subClass;
+package main.Java.model.subClass;
 
 public class SensorUmidade {
     private double umidade;

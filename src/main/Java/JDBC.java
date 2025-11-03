@@ -1,4 +1,4 @@
-package java.main;
+package main.Java;
 import java.sql.*;
 
 // Apenas de exemplo, tive dificuldade de usar o OracleXE, travou meu PC.

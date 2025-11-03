@@ -1,6 +1,4 @@
-package java.main.model;
-
-import java.time.LocalDate;
+package main.Java.model;
 
 public class CadastroArea {
     private double tamanho;

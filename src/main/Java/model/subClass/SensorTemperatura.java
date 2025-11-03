@@ -1,6 +1,6 @@
-package java.main.model.subClass;
+package main.Java.model.subClass;
 
-import java.main.model.Sensor;
+import main.Java.model.Sensor;
 
 public class SensorTemperatura extends Sensor {
     private double temperatura;

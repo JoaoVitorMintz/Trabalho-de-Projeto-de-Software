@@ -1,4 +1,4 @@
-package java.main.model;
+package main.Java.model;
 
 public class Sensor {
 

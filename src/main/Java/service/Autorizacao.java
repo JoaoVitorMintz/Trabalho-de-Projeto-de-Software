@@ -1,4 +1,4 @@
-package java.main.service;
+package main.Java.service;
 
 public class Autorizacao {
     private String senhaHash;
