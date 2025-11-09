@@ -1,104 +1,111 @@
-@startuml ClassDiagram 
-' ============================= 
-' Classes de Sensores 
-' ============================= 
-class Sensor { 
-  + boolean validarSensores() 
-} 
+@startuml ClassDiagram
+' =============================
+' Classes de Sensores
+' =============================
+class Sensor {
+  - NUMBER idSensor
+  - VARCHAR2 tipo
+  + BOOLEAN validarSensores()
+}
 
-class SensorTemperatura { 
-  - double Temperatura 
-  + boolean ValidarTemperatura() 
-} 
+class SensorTemperatura {
+  - NUMBER temperatura
+  + BOOLEAN validarTemperatura()
+}
 
-class SensorUmidade { 
-  - double Umidade 
-  + boolean ValidarUmidade() 
-} 
+class SensorUmidade {
+  - NUMBER umidade
+  + BOOLEAN validarUmidade()
+}
 
-class SensorInfravermelho { 
-  - boolean Ativo 
-  + boolean ValidarPragas() 
-} 
+class SensorInfravermelho {
+  - BOOLEAN ativo
+  + BOOLEAN validarPragas()
+}
 
-Sensor <|-- SensorTemperatura 
-Sensor <|-- SensorUmidade 
-Sensor <|-- SensorInfravermelho 
+Sensor <|-- SensorTemperatura
+Sensor <|-- SensorUmidade
+Sensor <|-- SensorInfravermelho
 
-' ============================= 
-' Classes de Drones e Missões 
-' ============================= 
-class Drone { 
-  - int ID 
-  - List<Sensor> sensores 
-  - string Status 
-  + void atualizarStatus(string novoStatus) 
-} 
+' =============================
+' Classes de Drones e Missões
+' =============================
+class Drone {
+  - NUMBER idDrone
+  - VARCHAR2 status
+  - LIST<Sensor> sensores
+  + VOID atualizarStatus(VARCHAR2 novoStatus)
+}
 
-class MissoesVoo { 
-  - date Data 
-  - string idMissao 
-  - CadastroArea area 
-  - Drones drone 
-  + void AtribuirDrone(Drone drone) 
-  + boolean verificarSopreposicao() 
-} 
+class MissoesVoo {
+  - DATE data
+  - VARCHAR2 idMissao
+  - NUMBER duracao
+  - CadastroArea area
+  - Drone drone
+  + VOID atribuirDrone(Drone drone)
+  + BOOLEAN verificarSobreposicao()
+}
 
-class CadastroArea { 
-  - double Tamanho 
-  - string Localizacao 
-  - string TipoCultivo 
-} 
+class CadastroArea {
+  - NUMBER tamanho
+  - VARCHAR2 localizacao
+  - VARCHAR2 tipoCultivo
+}
 
-class RegistroDados { 
-  - List<File> Imagens 
-  - List<double> ValoresSensores 
-  + void salvarDados() 
-} 
+class RegistroDados {
+  - LIST<BLOB> imagens
+  - LIST<NUMBER> valoresSensores
+  + VOID salvarDados()
+}
 
-class Relatorio { 
-  - List<double> medicoes 
-  - int Qtd_Voo 
-  + void gerarResumo() 
-} 
+class Relatorio {
+  - LIST<NUMBER> medicoes
+  - NUMBER qtdVoo
+  + VOID gerarResumo()
+}
 
-Drone --> "1..*" Sensor 
-MissoesVoo --> Drone 
-MissoesVoo --> CadastroArea 
-MissoesVoo --> RegistroDados 
-RegistroDados --> Relatorio 
+Drone "1" --> "1..*" Sensor
+MissoesVoo "1" --> "1" Drone
+MissoesVoo "1" --> "1" CadastroArea
+MissoesVoo "1" --> "1" RegistroDados
+RegistroDados "1" --> "1" Relatorio
 
-' ============================= 
-' Outras Classes 
-' ============================= 
-class Autorizacao { 
-  - string senhaHash
-  - string role
-  + string verificarRole()
-  + boolean validarSenha(string senhaDigitada) 
-} 
+' =============================
+' Outras Classes
+' =============================
+class Autorizacao {
+  - VARCHAR2 senhaHash
+  - VARCHAR2 token
+  - VARCHAR2 role
+  + VARCHAR2 verificarRole()
+  + BOOLEAN validarSenha(VARCHAR2 senhaDigitada)
+  + BOOLEAN validarToken(VARCHAR2 tokenRecebido)
+}
 
-class Checklist { 
-  - double Bateria 
-  - List<Boolean> SensoresFunc 
-  + boolean validarChecklist() 
-} 
+class Checklist {
+  - NUMBER nivelBateria
+  - LIST<BOOLEAN> sensoresFunc
+  + BOOLEAN validarChecklist()
+}
 
-Checklist --> MissoesVoo
+Checklist "1" --> "1" MissoesVoo
 
 class Usuario {
-  - string nome
-  - int userID
-  + boolean fazerLogin()
+  - NUMBER userID
+  - VARCHAR2 nome
+  - VARCHAR2 email
+  + BOOLEAN fazerLogin(VARCHAR2 senha)
+  + BOOLEAN validarEmail()
 }
 
 class Administrador {
-  + void cadastrarUsuario()
-  + void gerenciarSistema()
+  + VOID cadastrarUsuario()
+  + VOID gerenciarSistema()
 }
 
 class Operador {
-  + void operarDrone()
+  + VOID operarDrone()
 }
 
 Usuario <|-- Administrador
