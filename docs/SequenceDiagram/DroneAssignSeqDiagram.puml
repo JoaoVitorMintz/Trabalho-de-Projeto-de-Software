@@ -1,0 +1,40 @@
+@startuml
+actor Administrador as admin
+participant "Sistema" as sys
+database "Banco de Dados" as DB
+participant "Drone" as drone
+participant "Sensor" as sensor
+
+title Diagrama de Sequência – Cadastro de Drone (Administrador)
+
+admin -> sys : fazerLogin(email, senha)
+sys -> DB : validarCredenciais(email, senha)
+DB --> sys : statusLogin(ok)
+
+alt Login válido
+  admin -> sys : cadastrarDrone(idDrone, listaSensores)
+  sys -> drone : criarDrone(idDrone)
+  drone --> sys : droneCriado()
+
+  loop para cada sensor
+    sys -> sensor : validarSensores(tipoSensor)
+    alt Sensor válido
+      sys -> DB : salvarSensor(sensor)
+      DB --> sys : confirmacaoSensor()
+    else Sensor inválido
+      sys --> admin : erro("Tipo de sensor inválido")
+      break
+    end
+  end
+
+  sys -> drone : associarSensores(listaSensores)
+  drone --> sys : sensoresAssociados()
+
+  sys -> DB : salvarDrone(drone)
+  DB --> sys : confirmacaoCadastro()
+
+  sys --> admin : mensagemSucesso("Drone cadastrado com sucesso")
+else Login inválido
+  sys --> admin : mensagemErro("Credenciais incorretas")
+end
+@enduml

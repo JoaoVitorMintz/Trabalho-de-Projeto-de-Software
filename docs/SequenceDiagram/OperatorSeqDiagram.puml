@@ -1,0 +1,37 @@
+@startuml
+actor Operador as user
+participant "Sistema" as sys
+database "Banco de Dados" as DB
+participant "Drone" as drone
+
+title Diagrama de Sequência - Atuação do Operador
+
+user -> sys : login(email, senha)
+sys -> DB : validarCredenciais(email, senha)
+DB --> sys : statusLogin(ok)
+
+alt Login válido
+  user -> sys : solicitarMissoesDisponiveis()
+  sys -> DB : buscarMissoesPorOperador(userID)
+  DB --> sys : listaMissoes
+
+  user -> sys : selecionarMissao(idMissao)
+  sys -> DB : buscarDetalhesMissao(idMissao)
+  DB --> sys : {drone, area, checklist}
+
+  sys -> drone : verificarStatus()
+  drone --> sys : statusDrone(pronto)
+
+  opt Checklist válido
+    sys -> drone : iniciarMissao(idMissao)
+    drone --> sys : dadosSensores(imagens, temperatura, umidade)
+    sys -> DB : registrarDadosMissao(idMissao, dadosSensores)
+    sys --> user : exibirResumoMissao()
+  else Checklist inválido
+    sys --> user : exibirErro("Checklist reprovado")
+  end
+
+else Login inválido
+  sys --> user : mensagemErro("Credenciais incorretas")
+end
+@enduml
