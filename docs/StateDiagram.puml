@@ -1,0 +1,46 @@
+@startuml StateDiagram
+skinparam state {
+  BackgroundColor lightblue
+  ArrowColor darkblue
+  BorderColor darkblue
+}
+
+state "Inicialização" as Initial <<start>>
+state "Ocioso" as Idle
+state "Em Voo" as InFlight
+state "Em Missão" as OnMission {
+    state "Decolando" as TakeOff
+    state "Voando" as Flying
+    state "Pousando" as Landing
+}
+state "Em Manutenção" as Maintenance
+state "Com Falha" as Failed
+state "Desativado" as Disabled <<end>>
+
+[*] --> Initial : Inicialização do Sistema
+
+Initial --> Idle : Configuração Concluída / Status OK
+Idle --> Maintenance : Solicitação de Manutenção
+Idle --> OnMission : Início da Missão (Atribuição)
+
+Maintenance --> Idle : Manutenção Concluída
+Maintenance --> Failed : Falha Detectada durante Manutenção
+
+OnMission --> InFlight : Verificação de Checklist OK
+
+InFlight --> Idle : Missão Concluída
+InFlight --> Failed : Falha Durante o Voo (Ex: Perda de Sinal)
+
+state OnMission {
+    [*] --> TakeOff : Iniciando Missão
+    TakeOff --> Flying : Altitude Mínima Atingida
+    Flying --> Landing : Tarefa de Voo Concluída / Bateria Baixa
+    Landing --> [*] : Pouso Concluído
+}
+
+Failed --> Maintenance : Tentativa de Reparo
+Failed --> Disabled : Irreparável
+
+Idle --> Disabled : Desativação por Idade/Dano
+
+@enduml
