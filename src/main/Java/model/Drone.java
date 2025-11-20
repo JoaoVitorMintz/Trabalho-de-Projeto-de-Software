@@ -9,6 +9,12 @@ public class Drone {
 
 
     public void atualizarStatus(String novoStatus) {
+        this.Status = novoStatus;
+    }
 
+    public void cadastrarDrone(int ID, List<Sensor> sensores, String status) {
+        this.ID = ID;
+        this.sensores = sensores;
+        this.Status = status;
     }
 }

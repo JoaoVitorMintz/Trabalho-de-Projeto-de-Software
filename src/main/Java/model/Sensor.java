@@ -1,8 +1,13 @@
 package main.Java.model;
 
 public class Sensor {
+    private String tipo;
 
-    boolean validarSensores() {
-        return true; // Apenas para não aparecer mensagem de erro
+    public Sensor(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getTipo() {
+        return tipo;
     }
 }

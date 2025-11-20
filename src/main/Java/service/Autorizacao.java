@@ -4,6 +4,11 @@ public class Autorizacao {
     private String senhaHash;
     private String role;
 
+    // public Autorizacao(String senhaHash, String role) {
+    //     this.senhaHash = senhaHash;
+    //     this.role = role;
+    // }
+
     public String verificarRole(String role) {
         return role;
     }
