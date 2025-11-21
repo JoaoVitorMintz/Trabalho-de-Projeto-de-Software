@@ -100,7 +100,6 @@ class Usuario {
 }
 
 class Administrador {
-  + VOID cadastrarUsuario()
   + VOID gerenciarSistema()
 }
 

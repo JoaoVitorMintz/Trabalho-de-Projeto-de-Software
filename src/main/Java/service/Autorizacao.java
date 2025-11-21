@@ -1,23 +1,20 @@
 package main.Java.service;
 
 public class Autorizacao {
+
     private String senhaHash;
+    private String token;
     private String role;
 
-    // public Autorizacao(String senhaHash, String role) {
-    //     this.senhaHash = senhaHash;
-    //     this.role = role;
-    // }
+    public boolean validarSenha(String senhaDigitada) {
+        return senhaHash.equals(Integer.toString(senhaDigitada.hashCode()));
+    }
 
-    public String verificarRole(String role) {
+    public boolean validarToken(String tk) {
+        return tk != null && tk.equals(token);
+    }
+
+    public String verificarRole() {
         return role;
-    }
-
-    public boolean verificarSenha(String senha) {
-        return true; // Apenas para não aparecer mensagem de erro
-    }
-
-    public String getSenhaHash() {
-        return senhaHash;
     }
 }
