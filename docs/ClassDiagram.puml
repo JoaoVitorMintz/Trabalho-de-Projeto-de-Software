@@ -105,6 +105,8 @@ class Administrador {
 
 class Operador {
   + VOID operarDrone()
+  - VOID registrarDados()
+  - VOID relatórioBasico()
 }
 
 Usuario <|-- Administrador

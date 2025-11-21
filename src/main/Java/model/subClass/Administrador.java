@@ -13,4 +13,13 @@ public class Administrador extends Usuario {
         // Pode ser ignorado pois o login agora é pelo BD
         return true;
     }
+
+    public void gerenciarSistema() {
+        System.out.print("""
+                Gerenciando sistema:
+                [1] - Cadastrar área agrícola
+                [2] - Cadastrar drone
+                [3] - Agendar missão de voo
+                """);
+    }
 }
