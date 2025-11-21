@@ -1,171 +1,213 @@
-package main.Java;
+package main;
 
+import java.sql.*;
+import java.time.LocalDate;
 import java.util.*;
-import main.Java.model.*;
-import main.Java.model.subClass.*;
-import main.Java.service.UsuarioService;
-import main.Java.service.impl.UsuarioServiceImpl;
 
 public class ApplicationMain {
 
+    static final String URL = "jdbc:oracle:thin:@localhost:1521:XE";
+    static final String USER = "app_user";
+    static final String PASS = "app_pwd";
+
     public static void main(String[] args) {
-
         Scanner sc = new Scanner(System.in);
-        UsuarioService userService = new UsuarioServiceImpl();
 
-        boolean loopPrincipal = true;
+        while (true) {
+            System.out.println("\n[1] Cadastrar Usuário  [2] Login");
+            int op = sc.nextInt();
 
-        while (loopPrincipal) {
+            if (op == 1) cadastrarUsuario(sc);
+            else if (op == 2) realizarLogin(sc);
+        }
+    }
 
-            System.out.println("""
-                [1] Cadastrar
-                [2] Login
-            """);
+    // ------------------- USUÁRIO -------------------------
 
-            int opc = sc.nextInt();
+    private static void cadastrarUsuario(Scanner sc) {
+        try (Connection c = DriverManager.getConnection(URL, USER, PASS)) {
+            System.out.print("Nome: "); String nome = sc.next();
+            System.out.print("Senha: "); String senha = sc.next();
+            System.out.print("Role [admin/operador]: "); String role = sc.next();
 
-            // CADASTRO
-            if (opc == 1) {
+            String insertUser = "INSERT INTO Usuario (nome,setor) VALUES (?,?)";
+            PreparedStatement ps = c.prepareStatement(insertUser, new String[]{"id"});
+            ps.setString(1, nome);
+            ps.setString(2, "Agricultura");
+            ps.executeUpdate();
 
-                System.out.print("Nome: ");
-                String nome = sc.next();
+            ResultSet rs = ps.getGeneratedKeys(); rs.next(); int id = rs.getInt(1);
 
-                System.out.print("Email: ");
-                String email = sc.next();
+            String auth = "INSERT INTO Autorizacao (usuario_id,senhaHash,role) VALUES (?,?,?)";
+            PreparedStatement pa = c.prepareStatement(auth);
+            pa.setInt(1, id);
+            pa.setString(2, senha);
+            pa.setString(3, role);
+            pa.executeUpdate();
 
-                System.out.print("Senha: ");
-                String senha = sc.next();
+            System.out.println("Usuário cadastrado com sucesso!");
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
 
-                System.out.println("Cargo: [1] Operador | [2] Administrador");
-                int cargo = sc.nextInt();
+    private static void realizarLogin(Scanner sc) {
+        try (Connection c = DriverManager.getConnection(URL, USER, PASS)) {
+            System.out.print("Nome: "); String nome = sc.next();
+            System.out.print("Senha: "); String senha = sc.next();
 
-                int id = new Random().nextInt(9999);
+            String sql = "SELECT u.id, a.role FROM Usuario u JOIN Autorizacao a ON a.usuario_id=u.id WHERE nome=? AND senhaHash=?";
+            PreparedStatement ps = c.prepareStatement(sql);
+            ps.setString(1, nome);
+            ps.setString(2, senha);
+            ResultSet rs = ps.executeQuery();
 
-                Usuario u = (cargo == 1)
-                        ? new Operador(nome, id, email)
-                        : new Administrador(nome, id, email);
+            if (!rs.next()) { System.out.println("Login inválido."); return; }
 
-                userService.cadastrar(u, senha);
-                System.out.println("Usuário cadastrado!\n");
-                continue;
-            }
+            int id = rs.getInt("id");
+            String role = rs.getString("role");
 
-            // LOGIN
-            if (opc == 2) {
+            System.out.println("Login OK! Role = " + role);
 
-                System.out.print("Nome: ");
-                String nome = sc.next();
-                System.out.print("Senha: ");
-                String senha = sc.next();
+            if (role.equals("admin")) menuAdmin(sc, c);
+            else menuOperador(sc, c, id);
 
-                if (!userService.autenticar(nome, senha)) {
-                    System.out.println("Login inválido.\n");
-                    continue;
-                }
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
 
-                Usuario usuario = userService.buscar(nome);
-                System.out.println("Login OK!\n");
+    // ------------------- ADMIN -------------------------
 
-                // MENU ADMIN
-                if (usuario instanceof Administrador) {
+    private static void menuAdmin(Scanner sc, Connection c) throws SQLException {
+        while (true) {
+            System.out.println("\n[1] Cadastrar Área  [2] Cadastrar Drone  [3] Agendar Missão  [4] Sair");
+            int op = sc.nextInt();
 
-                    boolean adminLoop = true;
-
-                    while (adminLoop) {
-
-                        System.out.println("""
-                            [1] Cadastrar área
-                            [2] Cadastrar drone
-                            [3] Agendar missão
-                            [4] Sair
-                        """);
-
-                        int esc = sc.nextInt();
-
-                        switch (esc) {
-
-                            case 1 -> {
-                                System.out.print("Tamanho: ");
-                                double t = sc.nextDouble();
-                                System.out.print("Localização: ");
-                                String loc = sc.next();
-                                System.out.print("Cultivo: ");
-                                String tipo = sc.next();
-
-                                new CadastroArea().cadastrar(t, loc, tipo);
-                                System.out.println("Área cadastrada.\n");
-                            }
-
-                            case 2 -> {
-                                System.out.print("ID Drone: ");
-                                int idD = sc.nextInt();
-                                System.out.print("Qtd sensores: ");
-                                int qtd = sc.nextInt();
-
-                                List<Sensor> sensores = new ArrayList<>();
-
-                                for (int i = 0; i < qtd; i++) {
-                                    System.out.println("[1] Temp  [2] Umidade  [3] IR");
-                                    int s = sc.nextInt();
-                                    sensores.add(
-                                            s == 1 ? new SensorTemperatura() :
-                                            s == 2 ? new SensorUmidade() :
-                                                     new SensorInfravermelho()
-                                    );
-                                }
-
-                                System.out.print("Status: ");
-                                String st = sc.next();
-
-                                new Drone().cadastrarDrone(idD, sensores, st);
-                                System.out.println("Drone cadastrado.\n");
-                            }
-
-                            case 3 -> System.out.println("Agendamento não implementado.\n");
-
-                            case 4 -> adminLoop = false;
-
-                            default -> System.out.println("Opção inválida.\n");
-                        }
-                    }
-                }
-
-                // MENU OPERADOR
-                else if (usuario instanceof Operador operador) {
-
-                    boolean opLoop = true;
-
-                    while (opLoop) {
-
-                        System.out.println("""
-                            [1] Registrar dados
-                            [2] Relatório básico
-                            [3] Sair
-                        """);
-
-                        int esc = sc.nextInt();
-
-                        switch (esc) {
-
-                            case 1 -> {
-                                System.out.println("Função não implementada.\n");
-                                operador.operarDrone(1);
-                            }
-
-                            case 2 -> {
-                                System.out.println("Função não implementada.\n");
-                                operador.operarDrone(2);
-                            }
-
-                            case 3 -> opLoop = false;
-
-                            default -> System.out.println("Opção inválida.\n");
-                        }
-                    }
-                }
+            switch (op) {
+                case 1 -> cadastrarArea(sc, c);
+                case 2 -> cadastrarDrone(sc, c);
+                case 3 -> agendarMissao(sc, c);
+                case 4 -> { return; }
             }
         }
+    }
 
-        sc.close();
+    private static void cadastrarArea(Scanner sc, Connection c) throws SQLException {
+        System.out.print("Tamanho: "); double t = sc.nextDouble();
+        System.out.print("Localização: "); String loc = sc.next();
+        System.out.print("Cultivo: "); String cul = sc.next();
+
+        PreparedStatement ps = c.prepareStatement("INSERT INTO CadastroAreas (tamanho,localizacao,tipoCultivo) VALUES (?,?,?)");
+        ps.setDouble(1, t); ps.setString(2, loc); ps.setString(3, cul);
+        ps.executeUpdate();
+
+        System.out.println("Área cadastrada!");
+    }
+
+    private static void cadastrarDrone(Scanner sc, Connection c) throws SQLException {
+        System.out.print("Modelo: "); String modelo = sc.next();
+        System.out.print("Status: "); String status = sc.next();
+
+        PreparedStatement ps = c.prepareStatement("INSERT INTO Drone (status,modelo) VALUES (?,?)", new String[]{"id"});
+        ps.setString(1, status); ps.setString(2, modelo);
+        ps.executeUpdate();
+
+        ResultSet rs = ps.getGeneratedKeys(); rs.next(); int droneId = rs.getInt(1);
+
+        System.out.println("Quantos sensores? "); int qtd = sc.nextInt();
+        for (int i = 0; i < qtd; i++) {
+            System.out.println("1-Temp 2-Umidade 3-IR");
+            int tipo = sc.nextInt();
+
+            PreparedStatement s = c.prepareStatement("INSERT INTO Sensor (nome,drone_id) VALUES (?,?)", new String[]{"id"});
+            String nome = switch (tipo) {
+                case 1 -> "Temperatura";
+                case 2 -> "Umidade";
+                default -> "Infravermelho";
+            };
+            s.setString(1, nome); s.setInt(2, droneId);
+            s.executeUpdate();
+            s.getGeneratedKeys();
+        }
+
+        // Checklist inicial
+        PreparedStatement chk = c.prepareStatement("INSERT INTO Checklist (bateria, sensoresFuncionais, drone_id) VALUES (?,?,?)");
+        chk.setDouble(1, 100); chk.setInt(2, 1); chk.setInt(3, droneId);
+        chk.executeUpdate();
+
+        System.out.println("Drone cadastrado");
+    }
+
+    private static void agendarMissao(Scanner sc, Connection c) {
+        try {
+            System.out.print("Drone id: "); int droneId = sc.nextInt();
+            System.out.print("Área id: "); int area = sc.nextInt();
+            System.out.print("Data (AAAA-MM-DD): "); LocalDate data = LocalDate.parse(sc.next());
+
+            // check checklist
+            PreparedStatement chk = c.prepareStatement("SELECT bateria,sensoresFuncionais FROM Checklist WHERE drone_id=?");
+            chk.setInt(1, droneId);
+            ResultSet r = chk.executeQuery();
+            if (!r.next() || r.getDouble(1) < 20 || r.getInt(2) == 0) {
+                System.out.println("Checklist reprovado. Missão proibida.");
+                return;
+            }
+
+            String sql = "INSERT INTO MissoesVoo (idMissao,data,drone_id,area_id) VALUES (?,?,?,?)";
+            PreparedStatement ps = c.prepareStatement(sql);
+            ps.setString(1, UUID.randomUUID().toString());
+            ps.setDate(2, java.sql.Date.valueOf(data));
+            ps.setInt(3, droneId);
+            ps.setInt(4, area);
+            ps.executeUpdate();
+
+            System.out.println("Missão agendada!");
+
+        } catch (SQLException e) {
+            if (e.getMessage().contains("uq_missao_drone_data"))
+                System.out.println("ERRO: Drone já possui missão nesta data!");
+            else e.printStackTrace();
+        }
+    }
+
+    // ------------------- OPERADOR -------------------------
+
+    private static void menuOperador(Scanner sc, Connection c, int userId) throws SQLException {
+        while (true) {
+            System.out.println("\n[1] Registrar Dados  [2] Relatório  [3] Sair");
+            int op = sc.nextInt();
+
+            switch (op) {
+                case 1 -> registrarDados(sc, c);
+                case 2 -> gerarRelatorio(c);
+                case 3 -> { return; }
+            }
+        }
+    }
+
+    private static void registrarDados(Scanner sc, Connection c) throws SQLException {
+        System.out.print("ID Missão: "); int mid = sc.nextInt();
+
+        PreparedStatement ps = c.prepareStatement("INSERT INTO RegistroDados (missao_id) VALUES (?)", new String[]{"id"});
+        ps.setInt(1, mid);
+        ps.executeUpdate();
+
+        ResultSet rs = ps.getGeneratedKeys(); rs.next(); int rid = rs.getInt(1);
+
+        // salvar relatório
+        PreparedStatement rel = c.prepareStatement("INSERT INTO Relatorio (medicoes,qtd_voo,registro_id) VALUES (?,?,?)");
+        rel.setDouble(1, Math.random()*50);
+        rel.setInt(2, 1);
+        rel.setInt(3, rid);
+        rel.executeUpdate();
+
+        System.out.println("Dados registrados!");
+    }
+
+    private static void gerarRelatorio(Connection c) throws SQLException {
+        Statement st = c.createStatement();
+        ResultSet r = st.executeQuery("SELECT * FROM Relatorio");
+
+        System.out.println("=== RELATÓRIOS ===");
+        while (r.next()) {
+            System.out.println("ID:"+r.getInt("id")+" | Última medição:"+r.getDouble("medicoes"));
+        }
     }
 }
