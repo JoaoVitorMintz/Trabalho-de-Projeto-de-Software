@@ -1,22 +1,10 @@
 package main.Java.service;
 
-import java.time.LocalDate;
-import main.Java.model.CadastroArea;
-import main.Java.model.Drone;
+import main.Java.model.Sensor;
 
 public class MissoesVoo {
-    
-    private LocalDate Data;
-    private String idMissao;
-    private CadastroArea area;
-    private Drone drone;
 
+    void agendarMissao(String data, String nomeArea, List<Sensor> sensores);
 
-    public void atribuirDrone(Drone drone) {
-
-    }
-
-    public boolean verificarSopreposicao() {
-        return true; // apenas para sumir o erro.
-    }
+    boolean verificarSobreposicao(String data, String nomeArea, List<Sensor> sensores);
 }

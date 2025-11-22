@@ -10,7 +10,7 @@ import main.Java.model.subClass.Operador;
 import main.Java.model.subClass.SensorInfravermelho;
 import main.Java.model.subClass.SensorTemperatura;
 import main.Java.model.subClass.SensorUmidade;
-import main.Java.service.UsuarioService;
+import main.Java.service.*;
 import main.Java.service.impl.UsuarioServiceImpl;
 
 public class ApplicationMain {
@@ -144,9 +144,35 @@ public class ApplicationMain {
                                 break;
 
                             case 3:
-                                System.out.println("Função de agendamento ainda não implementada.");
-                                break;
+                                System.out.println("Indique a data (DD/MM/YYYY ou DD.MM.YYYY): ");
+                                String data = sc.next();
+                                System.out.print("Nome da área: ");
+                                String nomeArea = sc.next();
 
+                                System.out.print("Indique o número de sensores necessários: ");
+                                int qtdAgendar = sc.nextInt();
+
+                                List<Sensor> sensoresUsados = new LinkedList<>();
+
+                                for (int i = 0; i < qtdAgendar; i++) {
+                                    System.out.println("""
+                                        Escolha o sensore a ser usado:
+                                        [1] - Temperatura
+                                        [2] - Umidade
+                                        [3] - Infravermelho
+                                    """);
+                                int sAgendar = sc.nextInt();
+                                }
+
+                                MissoesVoo ms = new MissoesVoo();
+
+                                if(ms.verificarSobreposicao(data, nomeArea, sAgendar)) {
+                                    System.out.print("Erro ao agendar, já há uma missão agendada.");
+                                    break;
+                                }
+
+                                agendarMissao(data, nomeArea, sAgendar);
+                                break;
                             case 4:
                                 menuAdmin = false;
                                 break;
@@ -172,7 +198,17 @@ public class ApplicationMain {
                         switch (escolha) {
 
                             case 1:
-                                System.out.println("Registro de dados ainda não implementado.");
+                                System.out.println("Insira o nome do arquivo em imagem (JPG): ");
+                                String nomeArq = sc.next();
+                                System.out.print("Para a próxima parte, caso não tenha usado determinado sensor, coloque 0.\n");
+                                for (int i = 0; i < 10; i++) {
+                                    System.out.print("Insira os dados " + i+1 + " do sensor Térmico (" + i+1 + " de 10): ");
+                                    List<Double> dadosTerm;
+                                    System.out.print("Insira os dados do sensor de Umidade (" + i+1 + " de 10): ");
+                                    List<Double> dadosUmid;
+                                    System.out.print("Insira os dados " + i+1 + " do sensor Térmico (" + i+1 + " de 10): ");
+                                    List<Double> dadosInfraVerm;
+                                }
                                 break;
 
                             case 2:
