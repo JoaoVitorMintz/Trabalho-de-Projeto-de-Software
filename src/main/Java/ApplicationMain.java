@@ -11,6 +11,7 @@ import main.Java.model.subClass.SensorInfravermelho;
 import main.Java.model.subClass.SensorTemperatura;
 import main.Java.model.subClass.SensorUmidade;
 import main.Java.service.*;
+import main.Java.service.impl.MissoesVooImpl;
 import main.Java.service.impl.UsuarioServiceImpl;
 
 public class ApplicationMain {
@@ -19,6 +20,8 @@ public class ApplicationMain {
 
         Scanner sc = new Scanner(System.in);
         UsuarioService userService = new UsuarioServiceImpl(); // CORRETO
+        RegistroDados reg = new RegistroDados();
+        Relatorio rel = new Relatorio();
         CadastroArea area = new CadastroArea();
         Drone drone = new Drone();
 
@@ -47,7 +50,11 @@ public class ApplicationMain {
 
                 int id = new Random().nextInt(9999);
 
-                System.out.println("Cargo [1] Operador | [2] Administrador");
+                System.out.println("""
+                        Cargo:
+                        [1] - Operador
+                        [2] - Administrador
+                        """);
                 int cargo = sc.nextInt();
 
                 Usuario novo;
@@ -152,7 +159,8 @@ public class ApplicationMain {
                                 System.out.print("Indique o número de sensores necessários: ");
                                 int qtdAgendar = sc.nextInt();
 
-                                List<Sensor> sensoresUsados = new LinkedList<>();
+                                MissoesVoo ms = new MissoesVooImpl();
+                                List<Sensor> sensoresMissao = new LinkedList<>();
 
                                 for (int i = 0; i < qtdAgendar; i++) {
                                     System.out.println("""
@@ -162,16 +170,19 @@ public class ApplicationMain {
                                         [3] - Infravermelho
                                     """);
                                 int sAgendar = sc.nextInt();
+
+                                if (sAgendar == 1) sensoresMissao.add(new SensorTemperatura());
+                                else if (sAgendar == 2) sensoresMissao.add(new SensorUmidade());
+                                else sensoresMissao.add(new SensorInfravermelho());
                                 }
 
-                                MissoesVoo ms = new MissoesVoo();
-
-                                if(ms.verificarSobreposicao(data, nomeArea, sAgendar)) {
+                                if(ms.verificarSobreposicao(data, nomeArea, sensoresMissao)) {
                                     System.out.print("Erro ao agendar, já há uma missão agendada.");
                                     break;
+                                } else {
+                                    ms.agendarMissao(data, nomeArea, sensoresMissao);
                                 }
 
-                                agendarMissao(data, nomeArea, sAgendar);
                                 break;
                             case 4:
                                 menuAdmin = false;
@@ -198,23 +209,30 @@ public class ApplicationMain {
                         switch (escolha) {
 
                             case 1:
-                                System.out.println("Insira o nome do arquivo em imagem (JPG): ");
-                                String nomeArq = sc.next();
-                                System.out.print("Para a próxima parte, caso não tenha usado determinado sensor, coloque 0.\n");
-                                for (int i = 0; i < 10; i++) {
-                                    System.out.print("Insira os dados " + i+1 + " do sensor Térmico (" + i+1 + " de 10): ");
-                                    List<Double> dadosTerm;
-                                    System.out.print("Insira os dados do sensor de Umidade (" + i+1 + " de 10): ");
-                                    List<Double> dadosUmid;
-                                    System.out.print("Insira os dados " + i+1 + " do sensor Térmico (" + i+1 + " de 10): ");
-                                    List<Double> dadosInfraVerm;
+                                List<Double> valoresTerm = new LinkedList<>();
+                                List<Double> valoresUmid = new LinkedList<>();
+                                List<Double> valoresInfra = new LinkedList<>();
+                                System.out.println("Insira os valores a seguir (caso o sensor solicitado não tenha sido usado, apenas insira 0):\n");
+
+                                for (int i = 0; i < 5; i++) {
+                                    System.out.print("Valor " + (i+1) + " do sensor térmico: ");
+                                    valoresTerm.add(sc.nextDouble());
+
+                                    System.out.print("Valor " + (i+1) + " do sensor de umidade: ");
+                                    valoresUmid.add(sc.nextDouble());
+
+                                    System.out.print("Valor " + (i+1) + " do sensor infravermelho: ");
+                                    valoresInfra.add(sc.nextDouble());
                                 }
-                                break;
 
+                                System.out.print("Nome do arquivo para salvar: ");
+                                String nomeArq = sc.next();
+
+                                reg.salvarDados(nomeArq, valoresTerm, valoresUmid, valoresInfra);
+                                break;
                             case 2:
-                                System.out.println("Geração de relatório ainda não implementado.");
+                                rel.gerarRelatorio(reg.getValoresTerm(), reg.getValoresUmid(), reg.getValoresInfra());
                                 break;
-
                             case 3:
                                 menuOp = false;
                                 break;
