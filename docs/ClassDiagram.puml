@@ -3,24 +3,24 @@
 ' Classes de Sensores
 ' =============================
 class Sensor {
-  - NUMBER idSensor
-  - VARCHAR2 tipo
-  + BOOLEAN validarSensores()
+  - int idSensor
+  - String tipo
+  + boolean validarSensores()
 }
 
 class SensorTemperatura {
-  - NUMBER temperatura
-  + BOOLEAN validarTemperatura()
+  - double temperatura
+  + boolean validarTemperatura()
 }
 
 class SensorUmidade {
-  - NUMBER umidade
-  + BOOLEAN validarUmidade()
+  - double umidade
+  + boolean validarUmidade()
 }
 
 class SensorInfravermelho {
-  - BOOLEAN ativo
-  + BOOLEAN validarPragas()
+  - boolean ativo
+  + boolean validarPragas()
 }
 
 Sensor <|-- SensorTemperatura
@@ -31,38 +31,38 @@ Sensor <|-- SensorInfravermelho
 ' Classes de Drones e Missões
 ' =============================
 class Drone {
-  - NUMBER idDrone
-  - VARCHAR2 status
-  - LIST<Sensor> sensores
-  + VOID atualizarStatus(VARCHAR2 novoStatus)
+  - int idDrone
+  - String status
+  - List<Sensor> sensores
+  + void atualizarStatus(String novoStatus)
 }
 
 class MissoesVoo {
-  - DATE data
-  - VARCHAR2 idMissao
-  - NUMBER duracao
+  - Date data
+  - String idMissao
+  - double duracao
   - CadastroArea area
   - Drone drone
-  + VOID atribuirDrone(Drone drone)
-  + BOOLEAN verificarSobreposicao()
+  + void atribuirDrone(Drone drone)
+  + boolean verificarSobreposicao()
 }
 
 class CadastroArea {
-  - NUMBER tamanho
-  - VARCHAR2 localizacao
-  - VARCHAR2 tipoCultivo
+  - double tamanho
+  - String localizacao
+  - String tipoCultivo
 }
 
 class RegistroDados {
-  - LIST<BLOB> imagens
-  - LIST<NUMBER> valoresSensores
-  + VOID salvarDados()
+  - List<byte[]> imagens
+  - List<Double> valoresSensores
+  + void salvarDados()
 }
 
 class Relatorio {
-  - LIST<NUMBER> medicoes
-  - NUMBER qtdVoo
-  + VOID gerarResumo()
+  - List<Double> medicoes
+  - int qtdVoo
+  + void gerarResumo()
 }
 
 Drone "1" --> "1..*" Sensor
@@ -72,45 +72,63 @@ MissoesVoo "1" --> "1" RegistroDados
 RegistroDados "1" --> "1" Relatorio
 
 ' =============================
-' Outras Classes
+' Classes de Usuários e Autenticação
 ' =============================
-class Autorizacao {
-  - VARCHAR2 senhaHash
-  - VARCHAR2 token
-  - VARCHAR2 role
-  + VARCHAR2 verificarRole()
-  + BOOLEAN validarSenha(VARCHAR2 senhaDigitada)
-  + BOOLEAN validarToken(VARCHAR2 tokenRecebido)
-}
-
-class Checklist {
-  - NUMBER nivelBateria
-  - LIST<BOOLEAN> sensoresFunc
-  + BOOLEAN validarChecklist()
-}
-
-Checklist "1" --> "1" MissoesVoo
-
 class Usuario {
-  - NUMBER userID
-  - VARCHAR2 nome
-  - VARCHAR2 email
-  + BOOLEAN fazerLogin(VARCHAR2 senha)
-  + BOOLEAN validarEmail()
+  - int userID
+  - String nome
+  - String email
+  + boolean validarEmail()
 }
 
 class Administrador {
-  + VOID gerenciarSistema()
+  + void gerenciarSistema(CadastroArea area, Drone drone, Scanner sc)
 }
 
 class Operador {
-  + VOID operarDrone()
-  - VOID registrarDados()
-  - VOID relatórioBasico()
+  + void executarOperacoes(RegistroDados reg, Relatorio rel, Scanner sc)
 }
 
 Usuario <|-- Administrador
 Usuario <|-- Operador
+
+class Autorizacao {
+  - String senhaHash
+  - String token
+  - String role
+  + String verificarRole()
+  + boolean validarSenha(String senhaDigitada)
+  + boolean validarToken(String tokenRecebido)
+}
+
 Usuario "1" --> "0..1" Autorizacao
+
+' =============================
+' Serviços e Aplicação
+' =============================
+interface UsuarioService {
+  + void cadastrar(Usuario usuario, String senha)
+  + boolean autenticar(String nomeOuEmail, String senha)
+  + Usuario buscar(String nomeOuEmail)
+}
+
+class UsuarioServiceImpl {
+  + void cadastrar(Usuario usuario, String senha)
+  + boolean autenticar(String nomeOuEmail, String senha)
+  + Usuario buscar(String nomeOuEmail)
+}
+
+UsuarioService <|.. UsuarioServiceImpl
+
+class ApplicationMain {
+  + static void main(String[] args)
+}
+
+ApplicationMain --> UsuarioServiceImpl
+ApplicationMain --> RegistroDados
+ApplicationMain --> Relatorio
+ApplicationMain --> CadastroArea
+ApplicationMain --> Drone
+ApplicationMain --> Scanner
 
 @enduml
