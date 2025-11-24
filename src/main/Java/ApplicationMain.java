@@ -2,7 +2,6 @@ package main.Java;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 import main.Java.model.*;
 import main.Java.model.subClass.Administrador;
@@ -48,7 +47,6 @@ public class ApplicationMain {
                 System.out.print("Senha: ");
                 String senha = sc.next();
 
-                int id = new Random().nextInt(9999);
 
                 System.out.println("""
                         Cargo:
@@ -60,19 +58,19 @@ public class ApplicationMain {
                 Usuario novo;
 
                 if (cargo == 1) {
-                    novo = new Operador(nome, id, email);
+                    novo = new Operador(nome, 0, email);
                 } else {
-                    novo = new Administrador(nome, id, email);
+                    novo = new Administrador(nome, 0, email);
                 }
 
                 userService.cadastrar(novo, senha);
-                System.out.println("Usuário cadastrado com sucesso!");
+                System.out.println("Usuário cadastrado com sucesso!\n");
                 continue;
             }
 
             else if (opcao == 2) {
 
-                System.out.print("Nome: ");
+                System.out.print("Nome (ou email): ");
                 String nome = sc.next();
 
                 System.out.print("Senha: ");
@@ -151,7 +149,7 @@ public class ApplicationMain {
                                 break;
 
                             case 3:
-                                System.out.println("Indique a data (DD/MM/YYYY ou DD.MM.YYYY): ");
+                                System.out.println("Indique a data (DD/MM/YYYY): "); //TODO: Verificar se funciona a inserção assim (supostamente, sim).
                                 String data = sc.next();
                                 System.out.print("Nome da área: ");
                                 String nomeArea = sc.next();
@@ -212,7 +210,7 @@ public class ApplicationMain {
                                 List<Double> valoresTerm = new LinkedList<>();
                                 List<Double> valoresUmid = new LinkedList<>();
                                 List<Double> valoresInfra = new LinkedList<>();
-                                System.out.println("Insira os valores a seguir (caso o sensor solicitado não tenha sido usado, apenas insira 0):\n");
+                                System.out.println("Insira 5 valores para cada sensor (0 caso não utilizado):\n");
 
                                 for (int i = 0; i < 5; i++) {
                                     System.out.print("Valor " + (i+1) + " do sensor térmico: ");

@@ -5,14 +5,9 @@ import main.Java.model.Usuario;
 public class Administrador extends Usuario {
 
     public Administrador(String nome, int userID, String email) {
-        super(nome, userID, email);
+        super(nome, userID, email, "ADMINISTRADOR");
     }
 
-    @Override
-    public boolean fazerLogin(String usuario, String senha) {
-        // Pode ser ignorado pois o login agora é pelo BD
-        return true;
-    }
 
     public void gerenciarSistema() {
         System.out.print("""
