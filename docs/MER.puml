@@ -1,0 +1,73 @@
+@startuml MER_Atualizado_Java
+
+!theme spacelab
+
+' =============================
+' Entidades principais
+' =============================
+entity "Usuario" as Usuario {
+  * userID : int
+  * nome : String
+  * email : String
+}
+
+entity "Administrador" as Administrador {
+  -- herda de Usuario --
+}
+
+entity "Operador" as Operador {
+  -- herda de Usuario --
+}
+
+entity "Autorizacao" as Autorizacao {
+  * senhaHash : String
+  * token : String
+  * role : String
+}
+
+entity "Drone" as Drone {
+  * idDrone : int
+  * status : String
+}
+
+entity "Sensor" as Sensor {
+  * idSensor : int
+  * tipo : String
+}
+
+entity "MissoesVoo" as MissoesVoo {
+  * idMissao : String
+  * data : Date
+  * duracao : double
+}
+
+entity "CadastroArea" as CadastroArea {
+  * localizacao : String
+  * tamanho : double
+  * tipoCultivo : String
+}
+
+entity "RegistroDados" as RegistroDados {
+  * imagens : List<byte[]>
+  * valoresSensores : List<Double>
+}
+
+entity "Relatorio" as Relatorio {
+  * medicoes : List<Double>
+  * qtdVoo : int
+}
+
+' =============================
+' Relacionamentos
+' =============================
+Usuario ||--o{ Autorizacao : possui >
+Usuario <|-- Administrador
+Usuario <|-- Operador
+
+Drone ||--o{ Sensor : possui >
+MissoesVoo ||--|| Drone : utiliza >
+MissoesVoo ||--|| CadastroArea : refere-se >
+MissoesVoo ||--|| RegistroDados : coleta >
+RegistroDados ||--|| Relatorio : gera >
+
+@enduml
