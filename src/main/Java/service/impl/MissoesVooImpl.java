@@ -9,10 +9,6 @@ import main.Java.service.MissoesVoo;
 
 public class MissoesVooImpl implements MissoesVoo {
 
-    
-
-
-    // VERIFICAR SOBREPOSIÇÃO DE MISSÃO
     @Override
     public boolean verificarSobreposicao(String dataStr, String nomeArea, List<Sensor> sensores) {
 
@@ -51,15 +47,14 @@ public class MissoesVooImpl implements MissoesVoo {
         }
     }
 
-    // AGENDAR MISSÃO
     @Override
     public void agendarMissao(String dataStr, String nomeArea, List<Sensor> sensores) {
 
         String sqlArea = "SELECT id FROM CadastroAreas WHERE localizacao = ?";
-        String sqlInsert = """
-            INSERT INTO MissoesVoo (idMissao, data, drone_id, area_id)
-            VALUES (?, ?, ?, ?)
-        """;
+
+        String sqlInsert =
+            "INSERT INTO MissoesVoo (idMissao, data, drone_id, area_id) " +
+            "VALUES (?, ?, ?, ?)";
 
         try (Connection conn = JDBC.conectar()) {
 
@@ -75,7 +70,7 @@ public class MissoesVooImpl implements MissoesVoo {
                 areaId = rs.getInt("id");
             }
 
-            // 2 — escolher drone (vamos pôr 1 fixo até você enviar sua lógica)
+            // 2 — escolher drone (placeholder)
             int droneId = 1;
 
             // 3 — converter data
@@ -100,7 +95,6 @@ public class MissoesVooImpl implements MissoesVoo {
         }
     }
 
-    // Converte "DD/MM/YYYY" → "YYYY-MM-DD"
     private String formatarData(String dataStr) {
         if (dataStr.contains("/")) {
             String[] p = dataStr.split("/");

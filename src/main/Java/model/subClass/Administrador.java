@@ -11,7 +11,6 @@ import main.Java.service.MissoesVoo;
 import main.Java.service.impl.MissoesVooImpl;
 
 public class Administrador extends Usuario {
-    
 
     public Administrador(String nome, int userID, String email) {
         super(nome, userID, email, "ADMINISTRADOR");
@@ -22,13 +21,14 @@ public class Administrador extends Usuario {
 
         while (menuAdmin) {
 
-            System.out.println("""
-                Escolha o que deseja fazer:
-                [1] - Cadastrar área agrícola
-                [2] - Cadastrar drone
-                [3] - Agendar missão de voo
-                [4] - Sair
-            """);
+            System.out.println(
+                "Escolha o que deseja fazer:\n" +
+                "[1] - Cadastrar área agrícola\n" +
+                "[2] - Cadastrar drone\n" +
+                "[3] - Agendar missão de voo\n" +
+                "[4] - Sair\n"
+            );
+
             System.out.print("-> ");
             int escolha = sc.nextInt();
 
@@ -58,12 +58,12 @@ public class Administrador extends Usuario {
                     List<Sensor> sensores = new LinkedList<>();
 
                     for (int i = 0; i < qtd; i++) {
-                        System.out.println("""
-                            Escolha o sensor:
-                            [1] - Temperatura
-                            [2] - Umidade
-                            [3] - Infravermelho
-                        """);
+                        System.out.println(
+                            "Escolha o sensor:\n" +
+                            "[1] - Temperatura\n" +
+                            "[2] - Umidade\n" +
+                            "[3] - Infravermelho\n"
+                        );
                         System.out.print("-> ");
                         int s = sc.nextInt();
 
@@ -92,12 +92,12 @@ public class Administrador extends Usuario {
                     List<Sensor> sensoresMissao = new LinkedList<>();
 
                     for (int i = 0; i < qtdAgendar; i++) {
-                        System.out.println("""
-                            Escolha o sensore a ser usado:
-                            [1] - Temperatura
-                            [2] - Umidade
-                            [3] - Infravermelho
-                        """);
+                        System.out.println(
+                            "Escolha o sensor a ser usado:\n" +
+                            "[1] - Temperatura\n" +
+                            "[2] - Umidade\n" +
+                            "[3] - Infravermelho\n"
+                        );
                         System.out.print("-> ");
                         int sAgendar = sc.nextInt();
 

@@ -19,12 +19,13 @@ public class Operador extends Usuario {
 
         while (menuOp) {
 
-            System.out.println("""
-                Escolha o que deseja fazer:
-                [1] - Registrar dados coletados
-                [2] - Relatório básico
-                [3] - Sair
-            """);
+            System.out.println(
+                "Escolha o que deseja fazer:\n" +
+                "[1] - Registrar dados coletados\n" +
+                "[2] - Relatório básico\n" +
+                "[3] - Sair\n"
+            );
+
             System.out.print("-> ");
             int escolha = sc.nextInt();
 

@@ -9,15 +9,14 @@ import main.Java.service.UsuarioService;
 
 public class UsuarioServiceImpl implements UsuarioService {
 
-    // AUTENTICAÇÃO
     @Override
     public boolean autenticar(String nome, String senha) {
-        String sql = """
-            SELECT a.senha_hash
-            FROM Usuario u
-            JOIN Autorizacao a ON a.usuario_id = u.id
-            WHERE u.nome = ?
-        """;
+
+        String sql =
+            "SELECT a.senha_hash " +
+            "FROM Usuario u " +
+            "JOIN Autorizacao a ON a.usuario_id = u.id " +
+            "WHERE u.nome = ?";
 
         try (Connection conn = JDBC.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -36,20 +35,18 @@ public class UsuarioServiceImpl implements UsuarioService {
         return false;
     }
 
-    // CADASTRAR USUÁRIO
     @Override
     public void cadastrar(Usuario usuario, String senha) {
 
-        String sqlUsuario = "INSERT INTO Usuario (nome, setor) VALUES (?, ?) RETURNING id";
+        String sqlUsuario =
+            "INSERT INTO Usuario (nome, setor) VALUES (?, ?) RETURNING id";
 
-        String sqlAuth = """
-            INSERT INTO Autorizacao (usuario_id, senha_hash, role)
-            VALUES (?, ?, ?)
-        """;
+        String sqlAuth =
+            "INSERT INTO Autorizacao (usuario_id, senha_hash, role) " +
+            "VALUES (?, ?, ?)";
 
         try (Connection conn = JDBC.conectar()) {
 
-            // 1 — inserir na tabela Usuario
             int novoId;
             try (PreparedStatement stmt = conn.prepareStatement(sqlUsuario)) {
                 stmt.setString(1, usuario.getNome());
@@ -59,7 +56,6 @@ public class UsuarioServiceImpl implements UsuarioService {
                 novoId = rs.getInt("id");
             }
 
-            // 2 — inserir na tabela Autorizacao
             try (PreparedStatement stmt = conn.prepareStatement(sqlAuth)) {
                 stmt.setInt(1, novoId);
                 stmt.setString(2, senha);
@@ -72,9 +68,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
     }
 
-    // REMOVER USUÁRIO
     @Override
     public void remover(int userID) {
+
         String deleteAuth = "DELETE FROM Autorizacao WHERE usuario_id = ?";
         String deleteUser = "DELETE FROM Usuario WHERE id = ?";
 
@@ -95,29 +91,28 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
     }
 
-    // BUSCAR USUÁRIO
     @Override
     public Usuario buscar(String nome) {
-        String sql = """
-            SELECT u.id, u.setor, a.role
-            FROM Usuario u
-            JOIN Autorizacao a ON a.usuario_id = u.id
-            WHERE u.nome = ?
-        """;
+
+        String sql =
+            "SELECT u.id, u.setor, a.role " +
+            "FROM Usuario u " +
+            "JOIN Autorizacao a ON a.usuario_id = u.id " +
+            "WHERE u.nome = ?";
 
         try (Connection conn = JDBC.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, nome);
-
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+
                 int id = rs.getInt("id");
                 String setor = rs.getString("setor");
                 String role = rs.getString("role");
 
-                if (role.equals("ADMIN")) {
+                if ("ADMIN".equals(role)) {
                     return new Administrador(nome, id, setor);
                 } else {
                     return new Operador(nome, id, setor);

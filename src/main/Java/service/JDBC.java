@@ -6,23 +6,17 @@ import java.sql.SQLException;
 
 public class JDBC {
 
-    public static Connection conectar() throws SQLException {
-        
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Driver JDBC do PostgreSQL não encontrado!", e);
-        }
-        
-        String host = "localhost";
-        String port = "5432";
-        String db = "projeto_sensores";
+    public static Connection conectar() {
+        String url = "jdbc:postgresql://localhost:5432/projeto_sensores";
         String user = "usuario";
         String pass = "1234";
 
-        String url = "jdbc:postgresql://" + host + ":" + port + "/" + db;
+        try {
+            return DriverManager.getConnection(url, user, pass);
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao conectar ao banco!", e);
+        }
 
-        return DriverManager.getConnection(url, user, pass);
     }
 
 }

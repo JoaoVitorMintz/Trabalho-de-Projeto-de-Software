@@ -12,7 +12,7 @@ public class ApplicationMain {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        UsuarioService userService = new UsuarioServiceImpl(); // CORRETO
+        UsuarioService userService = new UsuarioServiceImpl();
         RegistroDados reg = new RegistroDados();
         Relatorio rel = new Relatorio();
         CadastroArea area = new CadastroArea();
@@ -22,11 +22,12 @@ public class ApplicationMain {
 
         while (continua) {
 
-            System.out.println("""
-                Escolha o que deseja fazer:
-                [1] - Cadastrar-se
-                [2] - Logar
-            """);
+            System.out.println(
+                "Escolha o que deseja fazer:\n" +
+                "[1] - Cadastrar-se\n" +
+                "[2] - Logar\n"
+            );
+
             System.out.print("-> ");
             int opcao = sc.nextInt();
 
@@ -41,11 +42,12 @@ public class ApplicationMain {
                 System.out.print("Senha: ");
                 String senha = sc.next();
 
-                System.out.println("""
-                        Cargo:
-                        [1] - Operador
-                        [2] - Administrador
-                        """);
+                System.out.println(
+                    "Cargo:\n" +
+                    "[1] - Operador\n" +
+                    "[2] - Administrador\n"
+                );
+
                 System.out.print("-> ");
                 int cargo = sc.nextInt();
 
@@ -80,14 +82,16 @@ public class ApplicationMain {
 
                 System.out.println("\nLogin realizado com sucesso!\n");
 
-                if (usuario instanceof Administrador admin) {
-                    admin.gerenciarSistema(area, drone, sc); 
-                } else if (usuario instanceof Operador op) {
+                if (usuario instanceof Administrador) {
+                    Administrador admin = (Administrador) usuario;
+                    admin.gerenciarSistema(area, drone, sc);
+                } else if (usuario instanceof Operador) {
+                    Operador op = (Operador) usuario;
                     op.executarOperacoes(reg, rel);
                 }
-                
             }
         }
+
         sc.close();
     }
 }
