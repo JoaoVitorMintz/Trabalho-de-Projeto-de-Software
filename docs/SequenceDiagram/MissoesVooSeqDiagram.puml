@@ -1,0 +1,45 @@
+@startuml
+actor Operador as user
+participant "Sistema" as sys
+participant "MissoesVooImpl" as missao
+participant "Drone" as drone
+participant "Checklist" as checklist
+participant "RegistroDados" as reg
+participant "Relatorio" as rel
+database "Banco de Dados" as DB
+
+title Diagrama de Sequência – Execução de Missão
+
+user -> sys : iniciarMissao(idMissao)
+sys -> missao : iniciarMissao()
+
+' Validação do checklist
+missao -> checklist : validarChecklist(drone)
+checklist --> missao : statusChecklist(ok)
+
+alt Checklist válido
+    ' Preparação do drone
+    missao -> drone : atualizarStatus("Decolando")
+    drone --> missao : statusAtualizado()
+
+    missao -> drone : coletarDados()
+    drone --> missao : {imagens, sensores}
+
+    ' Registro de dados
+    missao -> reg : salvarDados(imagens, sensores)
+    reg --> missao : dadosSalvos()
+
+    sys -> DB : inserirRegistroMissao(idMissao, dados)
+    DB --> sys : confirmação()
+
+    ' Geração do relatório
+    missao -> rel : gerarResumo()
+    rel --> missao : resumoPronto()
+
+    sys --> user : mostrarRelatorio()
+
+else Checklist inválido
+    sys --> user : erro("Checklist reprovado")
+end
+
+@enduml

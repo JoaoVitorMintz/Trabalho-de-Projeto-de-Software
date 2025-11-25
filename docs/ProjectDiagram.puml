@@ -1,52 +1,46 @@
 @startuml
 title Diagrama de Projeto - Sistema de Monitoramento Agrícola
 
-package "Camada de Usuário e Autenticação" {
+package "Usuários e Autenticação" {
   [Usuario]
   [Administrador]
   [Operador]
   [Autorizacao]
 }
 
-package "Camada de Operação de Drones" {
+package "Operação de Drones" {
   [Drone]
   [Checklist]
   [MissoesVoo]
+  [MissoesVooImpl]
 }
 
-package "Camada de Sensoriamento" {
+package "Sensoriamento" {
   [Sensor]
   [SensorTemperatura]
   [SensorUmidade]
   [SensorInfravermelho]
 }
 
-package "Camada de Dados e Relatórios" {
+package "Dados e Relatórios" {
   [RegistroDados]
   [Relatorio]
 }
 
-package "Camada de Gestão de Áreas" {
+package "Gestão de Áreas" {
   [CadastroArea]
 }
 
-' =============================
-' Relações entre módulos
-' =============================
-[Usuario] --> [Autorizacao] : autentica-se
-[Administrador] --> [Usuario] : gerencia
-[Operador] --> [MissoesVoo] : executa missão
+[MissoesVoo] <|.. [MissoesVooImpl]
+[MissoesVooImpl] --> [Drone]
+[MissoesVooImpl] --> [CadastroArea]
+[MissoesVooImpl] --> [RegistroDados]
+[Checklist] --> [MissoesVooImpl] : valida
 
-[MissoesVoo] --> [Drone] : controla
-[MissoesVoo] --> [CadastroArea] : define área
-[MissoesVoo] --> [RegistroDados] : coleta dados
-
-[Drone] --> [Sensor] : lê dados
-[Sensor] <|-- [SensorTemperatura]
-[Sensor] <|-- [SensorUmidade]
-[Sensor] <|-- [SensorInfravermelho]
-
-[RegistroDados] --> [Relatorio] : gera
-[Checklist] --> [MissoesVoo] : valida antes do voo
+[RegistroDados] --> [Relatorio]
+[Drone] --> [Sensor]
+[Usuario] --> [Autorizacao]
+[Administrador] --> [Usuario]
+[Operador] --> [MissoesVooImpl] : executa missão
 
 @enduml

@@ -1,4 +1,5 @@
 @startuml ClassDiagram
+
 ' =============================
 ' Classes de Sensores
 ' =============================
@@ -28,7 +29,7 @@ Sensor <|-- SensorUmidade
 Sensor <|-- SensorInfravermelho
 
 ' =============================
-' Classes de Drones e Missões
+' Drone e Missões
 ' =============================
 class Drone {
   - int idDrone
@@ -37,22 +38,41 @@ class Drone {
   + void atualizarStatus(String novoStatus)
 }
 
-class MissoesVoo {
-  - Date data
-  - String idMissao
-  - double duracao
-  - CadastroArea area
-  - Drone drone
-  + void atribuirDrone(Drone drone)
-  + boolean verificarSobreposicao()
+interface MissoesVoo {
+  + void iniciarMissao()
+  + void finalizarMissao()
 }
 
+class MissoesVooImpl {
+  - Drone drone
+  - CadastroArea area
+  - RegistroDados dados
+  + void iniciarMissao()
+  + void finalizarMissao()
+}
+
+MissoesVoo <|.. MissoesVooImpl
+MissoesVooImpl --> Drone
+MissoesVooImpl --> CadastroArea
+MissoesVooImpl --> RegistroDados
+
+class Checklist {
+  - boolean statusChecklist
+  + boolean validarChecklist(Drone drone)
+}
+
+' =============================
+' Áreas
+' =============================
 class CadastroArea {
   - double tamanho
   - String localizacao
   - String tipoCultivo
 }
 
+' =============================
+' Dados e Relatórios
+' =============================
 class RegistroDados {
   - List<byte[]> imagens
   - List<Double> valoresSensores
@@ -65,14 +85,10 @@ class Relatorio {
   + void gerarResumo()
 }
 
-Drone "1" --> "1..*" Sensor
-MissoesVoo "1" --> "1" Drone
-MissoesVoo "1" --> "1" CadastroArea
-MissoesVoo "1" --> "1" RegistroDados
-RegistroDados "1" --> "1" Relatorio
+RegistroDados --> Relatorio
 
 ' =============================
-' Classes de Usuários e Autenticação
+' Usuários e Autorização
 ' =============================
 class Usuario {
   - int userID
@@ -82,11 +98,11 @@ class Usuario {
 }
 
 class Administrador {
-  + void gerenciarSistema(CadastroArea area, Drone drone, Scanner sc)
+  + void gerenciarSistema()
 }
 
 class Operador {
-  + void executarOperacoes(RegistroDados reg, Relatorio rel, Scanner sc)
+  + void executarOperacoes()
 }
 
 Usuario <|-- Administrador
@@ -98,37 +114,28 @@ class Autorizacao {
   - String role
   + String verificarRole()
   + boolean validarSenha(String senhaDigitada)
-  + boolean validarToken(String tokenRecebido)
 }
 
-Usuario "1" --> "0..1" Autorizacao
+Usuario --> Autorizacao
 
 ' =============================
-' Serviços e Aplicação
+' Serviços
 ' =============================
 interface UsuarioService {
   + void cadastrar(Usuario usuario, String senha)
-  + boolean autenticar(String nomeOuEmail, String senha)
-  + Usuario buscar(String nomeOuEmail)
+  + boolean autenticar(String email, String senha)
 }
 
 class UsuarioServiceImpl {
   + void cadastrar(Usuario usuario, String senha)
-  + boolean autenticar(String nomeOuEmail, String senha)
-  + Usuario buscar(String nomeOuEmail)
+  + boolean autenticar(String email, String senha)
 }
 
 UsuarioService <|.. UsuarioServiceImpl
 
-class ApplicationMain {
-  + static void main(String[] args)
+class JDBC {
+  + Connection conectar()
+  + void fechar()
 }
-
-ApplicationMain --> UsuarioServiceImpl
-ApplicationMain --> RegistroDados
-ApplicationMain --> Relatorio
-ApplicationMain --> CadastroArea
-ApplicationMain --> Drone
-ApplicationMain --> Scanner
 
 @enduml
