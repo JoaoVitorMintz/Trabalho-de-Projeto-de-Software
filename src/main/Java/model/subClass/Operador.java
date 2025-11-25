@@ -3,7 +3,6 @@ package main.Java.model.subClass;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-
 import main.Java.model.Usuario;
 import main.Java.service.RegistroDados;
 import main.Java.service.Relatorio;
@@ -14,7 +13,8 @@ public class Operador extends Usuario {
         super(nome, userID, email, "OPERADOR");
     }
 
-    public void executarOperacoes(RegistroDados reg, Relatorio rel, Scanner sc) {
+    public void executarOperacoes(RegistroDados reg, Relatorio rel) {
+        Scanner sc = new Scanner(System.in);
         boolean menuOp = true;
 
         while (menuOp) {
@@ -25,7 +25,7 @@ public class Operador extends Usuario {
                 [2] - Relatório básico
                 [3] - Sair
             """);
-
+            System.out.print("-> ");
             int escolha = sc.nextInt();
 
             switch (escolha) {

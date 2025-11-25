@@ -27,7 +27,7 @@ public class ApplicationMain {
                 [1] - Cadastrar-se
                 [2] - Logar
             """);
-
+            System.out.print("-> ");
             int opcao = sc.nextInt();
 
             if (opcao == 1) {
@@ -46,6 +46,7 @@ public class ApplicationMain {
                         [1] - Operador
                         [2] - Administrador
                         """);
+                System.out.print("-> ");
                 int cargo = sc.nextInt();
 
                 Usuario novo;
@@ -82,7 +83,7 @@ public class ApplicationMain {
                 if (usuario instanceof Administrador admin) {
                     admin.gerenciarSistema(area, drone, sc); 
                 } else if (usuario instanceof Operador op) {
-                    op.executarOperacoes(reg, rel, sc);
+                    op.executarOperacoes(reg, rel);
                 }
                 
             }

@@ -3,18 +3,15 @@ package main.Java.model.subClass;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-
+import main.Java.model.CadastroArea;
+import main.Java.model.Drone;
 import main.Java.model.Sensor;
 import main.Java.model.Usuario;
-import main.Java.model.subClass.SensorInfravermelho;
-import main.Java.model.subClass.SensorTemperatura;
-import main.Java.model.subClass.SensorUmidade;
-import main.Java.service.CadastroArea;
-import main.Java.service.Drone;
 import main.Java.service.MissoesVoo;
 import main.Java.service.impl.MissoesVooImpl;
 
 public class Administrador extends Usuario {
+    
 
     public Administrador(String nome, int userID, String email) {
         super(nome, userID, email, "ADMINISTRADOR");
@@ -32,7 +29,7 @@ public class Administrador extends Usuario {
                 [3] - Agendar missão de voo
                 [4] - Sair
             """);
-
+            System.out.print("-> ");
             int escolha = sc.nextInt();
 
             switch (escolha) {
@@ -67,6 +64,7 @@ public class Administrador extends Usuario {
                             [2] - Umidade
                             [3] - Infravermelho
                         """);
+                        System.out.print("-> ");
                         int s = sc.nextInt();
 
                         if (s == 1) sensores.add(new SensorTemperatura());
@@ -100,6 +98,7 @@ public class Administrador extends Usuario {
                             [2] - Umidade
                             [3] - Infravermelho
                         """);
+                        System.out.print("-> ");
                         int sAgendar = sc.nextInt();
 
                         if (sAgendar == 1) sensoresMissao.add(new SensorTemperatura());
